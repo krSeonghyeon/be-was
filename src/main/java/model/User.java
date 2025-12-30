@@ -6,11 +6,11 @@ public class User {
     private String name;
     private String email;
 
-    public User(String userId, String password, String name, String email) {
+    public User(String userId, String password, String name) {
         this.userId = userId;
         this.password = password;
         this.name = name;
-        this.email = email;
+        this.email = generateEmail(userId);
     }
 
     public String getUserId() {
@@ -27,6 +27,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String generateEmail(String userId) {
+        return userId + "@naver.com";
     }
 
     @Override
