@@ -43,17 +43,22 @@ public class RequestHandler implements Runnable {
             File file = new File("src/main/resources/static" + url);
             byte[] body = Files.readAllBytes(file.toPath());
 
-            response200Header(dos, body.length);
+            String contentType = Files.probeContentType(file.toPath());
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            response200Header(dos, body.length, contentType);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + "\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
