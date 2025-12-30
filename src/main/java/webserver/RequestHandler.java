@@ -2,16 +2,13 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.util.QueryStringParser;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -48,7 +45,7 @@ public class RequestHandler implements Runnable {
                 query = split[1];
             }
 
-            Map<String, String[]> params = parseQuery(query);
+            Map<String, String[]> params = QueryStringParser.parse(query);
 
             printRequestLog(requestLine, br);
 
@@ -81,42 +78,6 @@ public class RequestHandler implements Runnable {
     private String getFirst(Map<String, String[]> params, String key) {
         String[] values = params.get(key);
         return (values == null || values.length == 0) ? null : values[0];
-    }
-
-    private Map<String, String[]> parseQuery(String query) {
-        Map<String, List<String>> temp = new HashMap<>();
-
-        if (query == null || query.isEmpty()) {
-            return new HashMap<>();
-        }
-
-        String[] pairs = query.split("&");
-        for (String pair : pairs) {
-            if (pair.isEmpty()) continue;
-            String[] kv = pair.split("=", 2);
-            String key = kv[0];
-            String value = kv.length > 1 ? decodeUtf8(kv[1]) : "";
-            List<String> values = temp.computeIfAbsent(key, k -> new ArrayList<>());
-            values.add(value);
-        }
-
-        Map<String, String[]> parameterMap = new HashMap<>();
-        for (Map.Entry<String, List<String>> entry : temp.entrySet()) {
-            parameterMap.put(
-                    entry.getKey(),
-                    entry.getValue().toArray(new String[0])
-            );
-        }
-
-        return parameterMap;
-    }
-
-    private String decodeUtf8(String value) {
-        try {
-            return URLDecoder.decode(value, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void handleStaticResource(String path, DataOutputStream dos) throws IOException {
