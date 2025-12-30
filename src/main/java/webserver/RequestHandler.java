@@ -3,7 +3,6 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,15 +131,23 @@ public class RequestHandler implements Runnable {
             return;
         }
 
-        byte[] body = Files.readAllBytes(file.toPath());
-
-        String contentType = Files.probeContentType(file.toPath());
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
-
-        response200Header(dos, body.length, contentType);
+        byte[] body = readFileToBytes(file);
+        ContentType contentType = ContentType.fromFileName(file.getName());
+        response200Header(dos, body.length, contentType.getMimeType());
         responseBody(dos, body);
+    }
+
+    private byte[] readFileToBytes(File file) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = fis.read(buffer)) != -1) {
+                baos.write(buffer, 0, read);
+            }
+            return baos.toByteArray();
+        }
     }
 
     private void printRequestLog(String requestLine, BufferedReader br) throws IOException {
