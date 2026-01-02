@@ -5,21 +5,23 @@ import java.net.Socket;
 import java.util.Map;
 
 import db.Database;
-import model.User;
+import model.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.http.ContentType;
 import webserver.http.HttpRequest;
 import webserver.http.HttpRequestParser;
 import webserver.http.HttpResponse;
+import webserver.staticresource.StaticResourceHandler;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
+    private final StaticResourceHandler staticResourceHandler;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(Socket connectionSocket, StaticResourceHandler staticResourceHandler) {
         this.connection = connectionSocket;
+        this.staticResourceHandler = staticResourceHandler;
     }
 
     public void run() {
@@ -36,23 +38,26 @@ public class RequestHandler implements Runnable {
                 return;
             }
 
+            HttpResponse response;
             if (request.path().equals("/create")) {
-                HttpResponse response;
-                if (request.parameters().isEmpty()) {
-                    response = HttpResponse.badRequest();
-                } else {
-                    User user = createUser(request.parameters());
-                    Database.addUser(user);
-                    response = HttpResponse.redirect("/login");
-                }
-                response.writeTo(dos);
-                return;
+                response = handleCreateUser(request);
+            } else {
+                response = staticResourceHandler.handle(request.path());
             }
-
-            handleStaticResource(request.path(), dos);
+            response.writeTo(dos);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private HttpResponse handleCreateUser(HttpRequest request) {
+        if (request.parameters().isEmpty()) {
+            return HttpResponse.badRequest();
+        }
+
+        User user = createUser(request.parameters());
+        Database.addUser(user);
+        return HttpResponse.redirect("/login");
     }
 
     private User createUser(Map<String, String[]> params) {
@@ -65,36 +70,5 @@ public class RequestHandler implements Runnable {
     private String getFirst(Map<String, String[]> params, String key) {
         String[] values = params.get(key);
         return (values == null || values.length == 0) ? null : values[0];
-    }
-
-    private void handleStaticResource(String path, DataOutputStream dos) throws IOException {
-        File file = new File("src/main/resources/static" + path);
-
-        if (file.isDirectory()) {
-            file = new File(file, "index.html");
-        }
-
-        if (!file.exists()) {
-            HttpResponse.notFound().writeTo(dos);
-            return;
-        }
-
-        byte[] body = readFileToBytes(file);
-        ContentType contentType = ContentType.fromFileName(file.getName());
-        HttpResponse response = HttpResponse.ok(body, contentType.getMimeType());
-        response.writeTo(dos);
-    }
-
-    private byte[] readFileToBytes(File file) throws IOException {
-        try (FileInputStream fis = new FileInputStream(file);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = fis.read(buffer)) != -1) {
-                baos.write(buffer, 0, read);
-            }
-            return baos.toByteArray();
-        }
     }
 }
