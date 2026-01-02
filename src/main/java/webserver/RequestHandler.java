@@ -9,6 +9,9 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.util.QueryStringParser;
+import webserver.http.HttpResponse;
+
+import javax.xml.crypto.Data;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -50,15 +53,17 @@ public class RequestHandler implements Runnable {
             printRequestLog(requestLine, br);
 
             if (path.equals("/create")) {
+                HttpResponse response;
+
                 if (params.isEmpty()) {
-                    response400(dos);
-                    return;
+                    response = HttpResponse.badRequest();
+                } else {
+                    User user = createUser(params);
+                    Database.addUser(user);
+                    response = HttpResponse.redirect("/login");
                 }
 
-                User user = createUser(params);
-                Database.addUser(user);
-
-                response302(dos, "/login");
+                response.writeTo(dos);
                 return;
             }
 
@@ -88,14 +93,14 @@ public class RequestHandler implements Runnable {
         }
 
         if (!file.exists()) {
-            response404(dos);
+            HttpResponse.notFound().writeTo(dos);
             return;
         }
 
         byte[] body = readFileToBytes(file);
         ContentType contentType = ContentType.fromFileName(file.getName());
-        response200Header(dos, body.length, contentType.getMimeType());
-        responseBody(dos, body);
+        HttpResponse response = HttpResponse.ok(body, contentType.getMimeType());
+        response.writeTo(dos);
     }
 
     private byte[] readFileToBytes(File file) throws IOException {
@@ -118,58 +123,5 @@ public class RequestHandler implements Runnable {
             requestLog.append(requestLine).append("\n");
         }
         logger.debug(requestLog.toString());
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType + "\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response302(DataOutputStream dos, String location) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + location + "\r\n");
-            dos.writeBytes("\r\n");
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response400(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 400 Bad Request \r\n");
-            dos.writeBytes("Content-Length: 0\r\n");
-            dos.writeBytes("\r\n");
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response404(DataOutputStream dos) {
-        try {
-            dos.writeBytes("HTTP/1.1 404 Not Found\r\n");
-            dos.writeBytes("Content-Length: 0\r\n");
-            dos.writeBytes("\r\n");
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
     }
 }
