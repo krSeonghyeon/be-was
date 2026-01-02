@@ -2,7 +2,6 @@ package webserver.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.util.QueryStringParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class HttpRequestParser {
             accessLog.append(line).append("\n");
         }
 
-        logger.debug("[ACCESS]\n{}", accessLog);
+        logger.debug("[ACCESS]\n{}", accessLog); // 추후 로깅 책임 분리 필요
 
         return new HttpRequest(method, path, params);
     }

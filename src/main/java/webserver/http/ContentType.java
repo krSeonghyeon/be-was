@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http;
 
 public enum ContentType {
     HTML("html", "text/html"),

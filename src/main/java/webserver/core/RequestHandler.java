@@ -1,4 +1,4 @@
-package webserver;
+package webserver.core;
 
 import java.io.*;
 import java.net.Socket;
@@ -8,6 +8,7 @@ import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.http.ContentType;
 import webserver.http.HttpRequest;
 import webserver.http.HttpRequestParser;
 import webserver.http.HttpResponse;
