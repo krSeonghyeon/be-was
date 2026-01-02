@@ -8,10 +8,9 @@ import db.Database;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.util.QueryStringParser;
+import webserver.http.HttpRequest;
+import webserver.http.HttpRequestParser;
 import webserver.http.HttpResponse;
-
-import javax.xml.crypto.Data;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -31,43 +30,25 @@ public class RequestHandler implements Runnable {
              BufferedReader br = new BufferedReader(new InputStreamReader(in));
              DataOutputStream dos = new DataOutputStream(out);
         ) {
-            String requestLine = br.readLine();
-            if (requestLine == null || requestLine.isEmpty()) {
+            HttpRequest request = HttpRequestParser.parser(br);
+            if (request == null) {
                 return;
             }
 
-            String[] tokens = requestLine.split(" ");
-            String url = tokens[1];
-
-            String path = url;
-            String query = "";
-
-            if (url.contains("?")) {
-                String[] split = url.split("\\?");
-                path = split[0];
-                query = split[1];
-            }
-
-            Map<String, String[]> params = QueryStringParser.parse(query);
-
-            printRequestLog(requestLine, br);
-
-            if (path.equals("/create")) {
+            if (request.path().equals("/create")) {
                 HttpResponse response;
-
-                if (params.isEmpty()) {
+                if (request.parameters().isEmpty()) {
                     response = HttpResponse.badRequest();
                 } else {
-                    User user = createUser(params);
+                    User user = createUser(request.parameters());
                     Database.addUser(user);
                     response = HttpResponse.redirect("/login");
                 }
-
                 response.writeTo(dos);
                 return;
             }
 
-            handleStaticResource(path, dos);
+            handleStaticResource(request.path(), dos);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -114,14 +95,5 @@ public class RequestHandler implements Runnable {
             }
             return baos.toByteArray();
         }
-    }
-
-    private void printRequestLog(String requestLine, BufferedReader br) throws IOException {
-        StringBuilder requestLog = new StringBuilder();
-        requestLog.append(requestLine).append("\n");
-        while ((requestLine = br.readLine()) != null && !requestLine.isEmpty()) {
-            requestLog.append(requestLine).append("\n");
-        }
-        logger.debug(requestLog.toString());
     }
 }
