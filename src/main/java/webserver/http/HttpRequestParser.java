@@ -1,30 +1,28 @@
 package webserver.http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequestParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpRequestParser.class);
-
     private HttpRequestParser() {}
 
-    public static HttpRequest parser(BufferedReader br) throws IOException {
+    public static HttpRequest parser(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
         String requestLine = br.readLine();
         if (requestLine == null || requestLine.isEmpty()) {
             return null;
         }
 
-        StringBuilder accessLog = new StringBuilder();
-        accessLog.append(requestLine).append("\n");
-
         String[] tokens = requestLine.split(" ");
         String method = tokens[0];
         String url = tokens[1];
+        String httpVersion = tokens[2];
 
         String path = url;
         String query = "";
@@ -35,18 +33,19 @@ public class HttpRequestParser {
             query = split[1];
         }
 
-        Map<String, String[]> params = QueryStringParser.parse(query);
-
-        while (true) {
-            String line = br.readLine();
-            if (line == null || line.isEmpty()) {
-                break;
-            }
-            accessLog.append(line).append("\n");
+        Map<String, String> headers = new HashMap<>();
+        String line;
+        while((line = br.readLine()) != null && !line.isEmpty()) {
+            String[] parts = line.split(":", 2);
+            headers.put(parts[0].trim().toLowerCase(), parts[1].trim());
         }
 
-        logger.debug("[ACCESS]\n{}", accessLog); // 추후 로깅 책임 분리 필요
+        byte[] body = null;
+        if (headers.containsKey("content-length")) {
+            int len = Integer.parseInt(headers.get("content-length"));
+            body = (len > 0) ? in.readNBytes(len) : new byte[0];
+        }
 
-        return new HttpRequest(method, path, params);
+        return new HttpRequest(method, path, query, httpVersion, headers, body);
     }
 }

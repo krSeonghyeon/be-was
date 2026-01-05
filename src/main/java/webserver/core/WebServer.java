@@ -7,6 +7,8 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.handler.CreateUserHandler;
+import webserver.router.Router;
 import webserver.staticresource.StaticResourceHandler;
 
 public class WebServer {
@@ -23,6 +25,10 @@ public class WebServer {
         }
 
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+        Router router = new Router();
+
+        router.register("GET", "/create", new CreateUserHandler());
+        router.register("POST", "/create", new CreateUserHandler());
         StaticResourceHandler staticResourceHandler = new StaticResourceHandler();
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
@@ -32,7 +38,7 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             while (true) {
                 Socket connection = listenSocket.accept();
-                executor.submit(new RequestHandler(connection, staticResourceHandler));
+                executor.submit(new RequestHandler(connection, router, staticResourceHandler));
             }
         }
     }
