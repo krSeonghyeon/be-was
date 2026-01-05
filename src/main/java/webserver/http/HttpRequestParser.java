@@ -2,8 +2,7 @@ package webserver.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,9 +10,7 @@ public class HttpRequestParser {
 
     private HttpRequestParser() {}
 
-    public static HttpRequest parser(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
+    public static HttpRequest parser(BufferedReader br) throws IOException {
         String requestLine = br.readLine();
         if (requestLine == null || requestLine.isEmpty()) {
             return null;
@@ -43,7 +40,10 @@ public class HttpRequestParser {
         byte[] body = null;
         if (headers.containsKey("content-length")) {
             int len = Integer.parseInt(headers.get("content-length"));
-            body = (len > 0) ? in.readNBytes(len) : new byte[0];
+            char[] buf = new char[len];
+            int read = br.read(buf, 0, len);
+            body = read > 0 ?
+                    new String(buf, 0, read).getBytes(StandardCharsets.UTF_8) : new byte[0];
         }
 
         return new HttpRequest(method, path, query, httpVersion, headers, body);

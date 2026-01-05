@@ -39,9 +39,10 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream();
+             BufferedReader br = new BufferedReader(new InputStreamReader(in));
              DataOutputStream dos = new DataOutputStream(out);
         ) {
-            HttpRequest request = HttpRequestParser.parser(in);
+            HttpRequest request = HttpRequestParser.parser(br);
             if (request == null) {
                 return;
             }
