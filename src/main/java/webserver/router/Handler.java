@@ -5,5 +5,6 @@ import webserver.http.HttpResponse;
 
 @FunctionalInterface
 public interface Handler {
+
     HttpResponse handle(HttpRequest request);
 }
