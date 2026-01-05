@@ -25,6 +25,7 @@ public class StaticResourceHandler {
         return HttpResponse.ok(body, contentType.getMimeType());
     }
 
+    // readallBytes
     private byte[] readFileToBytes(File file) throws IOException {
         try (FileInputStream fis = new FileInputStream(file);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
