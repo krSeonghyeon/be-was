@@ -8,9 +8,8 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.filter.AccessLogFilter;
+import webserver.config.AppConfig;
 import webserver.filter.RequestFilter;
-import webserver.handler.CreateUserHandler;
 import webserver.router.Router;
 import webserver.staticresource.StaticResourceHandler;
 
@@ -28,15 +27,11 @@ public class WebServer {
         }
 
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        Router router = new Router();
+        AppConfig config = new AppConfig();
 
-        router.register("GET", "/create", new CreateUserHandler());
-        router.register("POST", "/create", new CreateUserHandler());
-        StaticResourceHandler staticResourceHandler = new StaticResourceHandler();
-
-        List<RequestFilter> filters = List.of(
-                new AccessLogFilter()
-        );
+        Router router = config.router();
+        StaticResourceHandler staticResourceHandler = config.staticResourceHandler();
+        List<RequestFilter> filters = config.requestFilters();
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
