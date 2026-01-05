@@ -2,16 +2,13 @@ package webserver.core;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.config.AppConfig;
-import webserver.filter.RequestFilter;
-import webserver.router.Router;
-import webserver.staticresource.StaticResourceHandler;
 
 public class WebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
@@ -27,11 +24,7 @@ public class WebServer {
         }
 
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        AppConfig config = new AppConfig();
-
-        Router router = config.router();
-        StaticResourceHandler staticResourceHandler = config.staticResourceHandler();
-        List<RequestFilter> filters = config.requestFilters();
+        final AppConfig config = new AppConfig();
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
         try (ServerSocket listenSocket = new ServerSocket(port)) {
@@ -43,9 +36,9 @@ public class WebServer {
                 executor.submit(
                         new RequestHandler(
                                 connection,
-                                router,
-                                staticResourceHandler,
-                                filters
+                                config.handlerMappings(),
+                                config.handlerAdapters(),
+                                config.requestFilters()
                         )
                 );
             }

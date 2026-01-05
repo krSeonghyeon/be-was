@@ -2,9 +2,8 @@ package webserver.config;
 
 import webserver.filter.AccessLogFilter;
 import webserver.filter.RequestFilter;
-import webserver.handler.CreateUserHandler;
+import webserver.handler.*;
 import webserver.router.Router;
-import webserver.staticresource.StaticResourceHandler;
 
 import java.util.List;
 
@@ -12,18 +11,25 @@ public class AppConfig {
 
     private final Router router = createRouter();
     private final StaticResourceHandler staticResourceHandler = new StaticResourceHandler();
-    private final List<RequestFilter> requestFilters = List.of(new AccessLogFilter());
 
-    public Router router() {
-        return router;
+    public List<HandlerMapping> handlerMappings() {
+        return List.of(
+                new RouterHandlerMapping(router),
+                new StaticResourceHandlerMapping(staticResourceHandler)
+        );
     }
 
-    public StaticResourceHandler staticResourceHandler() {
-        return staticResourceHandler;
+    public List<HandlerAdapter> handlerAdapters() {
+        return List.of(
+                new SimpleHandlerAdapter(),
+                new StaticResourceHandlerAdapter()
+        );
     }
 
     public List<RequestFilter> requestFilters() {
-        return requestFilters;
+        return List.of(
+                new AccessLogFilter()
+        );
     }
 
     private Router createRouter() {

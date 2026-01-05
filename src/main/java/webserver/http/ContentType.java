@@ -6,6 +6,7 @@ public enum ContentType {
     JS("js", "application/javascript"),
     PNG("png", "image/png"),
     JPG("jpg", "image/jpeg"),
+    SVG("svg", "image/svg+xml"),
     ICO("ico", "image/x-icon"),
     OCTET_STREAM("", "application/octet-stream");
 

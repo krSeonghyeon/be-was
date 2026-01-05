@@ -1,4 +1,4 @@
-package webserver.staticresource;
+package webserver.handler;
 
 import webserver.http.ContentType;
 import webserver.http.HttpResponse;
@@ -9,8 +9,27 @@ public class StaticResourceHandler {
 
     private static final String BASE_PATH = "src/main/resources/static";
 
-    public HttpResponse handle(String path) throws IOException {
+    public boolean exists(String path) {
+        return resolve(path).exists();
+    }
 
+    public HttpResponse handle(String path) throws IOException {
+        File file = resolve(path);
+
+        if (!file.exists()) {
+            return HttpResponse.notFound();
+        }
+
+        byte[] body;
+        try (InputStream is = new FileInputStream(file)) {
+            body = is.readAllBytes();
+        }
+
+        ContentType contentType = ContentType.fromFileName(file.getName());
+        return HttpResponse.ok(body, contentType.getMimeType());
+    }
+
+    private File resolve(String path) {
         if (path.equals("/")) {
             path = "/index.html";
         }
@@ -21,15 +40,6 @@ public class StaticResourceHandler {
             file = new File(file, "index.html");
         }
 
-        if (!file.exists()) {
-            return HttpResponse.notFound();
-        }
-
-        byte[] body;
-        try (InputStream is = new FileInputStream(file)) {
-            body = is.readAllBytes();
-        }
-        ContentType contentType = ContentType.fromFileName(file.getName());
-        return HttpResponse.ok(body, contentType.getMimeType());
+        return file;
     }
 }
