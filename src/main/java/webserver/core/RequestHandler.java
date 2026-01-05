@@ -2,9 +2,11 @@ package webserver.core;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.filter.RequestFilter;
 import webserver.http.HttpRequest;
 import webserver.http.HttpRequestParser;
 import webserver.http.HttpResponse;
@@ -19,14 +21,17 @@ public class RequestHandler implements Runnable {
     private final Socket connection;
     private final Router router;
     private final StaticResourceHandler staticResourceHandler;
+    private final List<RequestFilter> filters;
 
     public RequestHandler(Socket connectionSocket,
                           Router router,
-                          StaticResourceHandler staticResourceHandler
+                          StaticResourceHandler staticResourceHandler,
+                          List<RequestFilter> filters
     ) {
         this.connection = connectionSocket;
         this.router = router;
         this.staticResourceHandler = staticResourceHandler;
+        this.filters = filters;
     }
 
     public void run() {
@@ -40,6 +45,10 @@ public class RequestHandler implements Runnable {
             HttpRequest request = HttpRequestParser.parser(in);
             if (request == null) {
                 return;
+            }
+
+            for (RequestFilter filter : filters) {
+                filter.doFilter(request);
             }
 
             Handler handler = router.route(request.method(), request.path());
