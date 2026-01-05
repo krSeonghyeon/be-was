@@ -1,4 +1,4 @@
-package webserver.handler;
+package webserver.dispatch;
 
 import webserver.http.HttpRequest;
 

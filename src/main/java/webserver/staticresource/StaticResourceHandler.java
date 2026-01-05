@@ -1,4 +1,4 @@
-package webserver.handler;
+package webserver.staticresource;
 
 import webserver.http.ContentType;
 import webserver.http.HttpResponse;

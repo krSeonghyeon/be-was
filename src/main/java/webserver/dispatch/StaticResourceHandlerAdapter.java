@@ -1,5 +1,6 @@
-package webserver.handler;
+package webserver.dispatch;
 
+import webserver.staticresource.StaticResourceHandler;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 

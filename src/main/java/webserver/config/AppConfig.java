@@ -1,9 +1,11 @@
 package webserver.config;
 
+import webserver.dispatch.*;
 import webserver.filter.AccessLogFilter;
 import webserver.filter.RequestFilter;
 import webserver.handler.*;
 import webserver.router.Router;
+import webserver.staticresource.StaticResourceHandler;
 
 import java.util.List;
 
