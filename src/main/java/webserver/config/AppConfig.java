@@ -54,7 +54,7 @@ public class AppConfig {
         Router router = new Router();
         router.register("POST", "/create", new CreateUserHandler());
         router.register("POST", "/login", new LoginHandler());
-//        router.register("POST", "/logout", new LogoutHandler());
+        router.register("POST", "/logout", new LogoutHandler());
         return router;
     }
 
