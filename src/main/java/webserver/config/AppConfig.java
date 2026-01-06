@@ -4,6 +4,8 @@ import webserver.dispatch.*;
 import webserver.filter.AccessLogFilter;
 import webserver.filter.RequestFilter;
 import webserver.handler.*;
+import webserver.interceptor.AuthInterceptor;
+import webserver.interceptor.HandlerInterceptor;
 import webserver.router.Router;
 import webserver.staticresource.StaticResourceHandler;
 
@@ -16,7 +18,7 @@ public class AppConfig {
 
     public List<HandlerMapping> handlerMappings() {
         return List.of(
-                new RouterHandlerMapping(router),
+                new RouterHandlerMapping(router, interceptors()), // 인터셉터 추가필요
                 new StaticResourceHandlerMapping(staticResourceHandler)
         );
     }
@@ -31,6 +33,12 @@ public class AppConfig {
     public List<RequestFilter> requestFilters() {
         return List.of(
                 new AccessLogFilter()
+        );
+    }
+
+    public List<HandlerInterceptor> interceptors() {
+        return List.of(
+                new AuthInterceptor()
         );
     }
 

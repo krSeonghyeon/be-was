@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.dispatch.HandlerExecutionChain;
 import webserver.filter.RequestFilter;
 import webserver.dispatch.HandlerAdapter;
 import webserver.dispatch.HandlerMapping;
@@ -48,20 +49,34 @@ public class RequestHandler implements Runnable {
             }
 
             for (RequestFilter filter : filters) {
-                filter.doFilter(request);
+                filter.doFilter(request); // TODO: 전/후 필터체인 형태로 바꾸기
             }
 
-            Object handler = getHandler(request);
+            HandlerExecutionChain chain = getHandlerExecutionChain(request);
 
             HttpResponse response;
-            if (handler == null) {
+            if (chain == null) {
                 response = HttpResponse.notFound();
             } else {
-                HandlerAdapter adapter = getHandlerAdapter(handler);
-                response = adapter.handle(request, handler);
+                Exception dispatchException = null;
+                try {
+                    if (!chain.applyPreHandle(request)) {
+                        response = HttpResponse.forbidden();
+                    } else {
+                        Object handler = chain.getHandler();
+                        HandlerAdapter adapter = getHandlerAdapter(handler);
+                        response = adapter.handle(request, handler);
+                        chain.applyPostHandle(request, response);
+                    }
+                } catch (Exception e) {
+                    dispatchException = e;
+                    throw e;
+                } finally {
+                    chain.triggerAfterCompletion(request, dispatchException);
+                }
             }
             response.writeTo(dos);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
@@ -75,12 +90,11 @@ public class RequestHandler implements Runnable {
         throw new IllegalStateException("No adapter for handler: " + handler);
     }
 
-    private Object getHandler(HttpRequest request) {
-        Object handler = null;
+    private HandlerExecutionChain getHandlerExecutionChain(HttpRequest request) {
         for (HandlerMapping mapping : handlerMappings) {
-            handler = mapping.getHandler(request);
-            if (handler != null) break;
+            HandlerExecutionChain chain = mapping.getHandler(request);
+            if (chain != null) return chain;
         }
-        return handler;
+        return null;
     }
 }

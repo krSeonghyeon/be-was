@@ -36,6 +36,12 @@ public class HttpResponse {
         return response;
     }
 
+    public static HttpResponse forbidden() {
+        HttpResponse response = new HttpResponse(HttpStatus.FORBIDDEN);
+        response.headers.put("Content-Length", "0");
+        return response;
+    }
+
     public static HttpResponse notFound() {
         HttpResponse response = new HttpResponse(HttpStatus.NOT_FOUND);
         response.headers.put("Content-Length", "0");

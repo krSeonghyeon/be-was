@@ -5,5 +5,5 @@ import webserver.http.HttpRequest;
 @FunctionalInterface
 public interface HandlerMapping {
 
-    Object getHandler(HttpRequest request);
+    HandlerExecutionChain getHandler(HttpRequest request);
 }

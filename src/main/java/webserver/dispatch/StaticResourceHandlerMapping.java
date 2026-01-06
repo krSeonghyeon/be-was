@@ -3,6 +3,8 @@ package webserver.dispatch;
 import webserver.staticresource.StaticResourceHandler;
 import webserver.http.HttpRequest;
 
+import java.util.List;
+
 public class StaticResourceHandlerMapping implements HandlerMapping {
 
     private final StaticResourceHandler staticResourceHandler;
@@ -12,7 +14,14 @@ public class StaticResourceHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpRequest request) {
-        return staticResourceHandler.exists(request.path()) ? staticResourceHandler : null;
+    public HandlerExecutionChain getHandler(HttpRequest request) {
+        if (!staticResourceHandler.exists(request.path())) {
+            return null;
+        }
+
+        return new HandlerExecutionChain(
+                staticResourceHandler,
+                List.of()
+        );
     }
 }
