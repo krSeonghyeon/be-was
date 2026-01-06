@@ -33,7 +33,7 @@ public class AccessLogFilter implements RequestFilter {
             chain.doFilter(request);
         } finally {
             long gap = System.currentTimeMillis() - start;
-            log.debug(sb.append("Elapsed: ").append(gap).append("ms").toString());
+            log.debug(sb.append("Elapsed: ").append(gap).append("ms\n").toString());
         }
     }
 }

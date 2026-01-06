@@ -66,4 +66,8 @@ public class HttpResponse {
         }
         dos.flush();
     }
+
+    public void addHeader(String name, String value) {
+        headers.put(name, value);
+    }
 }

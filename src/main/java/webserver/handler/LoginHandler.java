@@ -6,10 +6,11 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.QueryStringParser;
 import webserver.router.Handler;
+import webserver.session.SessionManager;
 
 import java.util.Map;
 
-public class CreateUserHandler implements Handler {
+public class LoginHandler implements Handler {
 
     @Override
     public HttpResponse handle(HttpRequest request) {
@@ -18,15 +19,27 @@ public class CreateUserHandler implements Handler {
 
         String userId = getFirst(params, "userId");
         String password = getFirst(params, "password");
-        String name = getFirst(params, "name");
 
-        if (userId == null || password == null || name == null) {
+        if (userId == null || password == null) {
             return HttpResponse.badRequest();
         }
 
-        User user = new User(userId, password, name);
-        Database.addUser(user);
-        return HttpResponse.redirect("/index.html");
+        User user = Database.findUserById(userId);
+        if (!authenticate(user, password)) {
+            return HttpResponse.redirect("/login.html?error=true"); // TODO: 수정필요(에러메시지)
+        }
+
+        String sessionId = SessionManager.createSession(user);
+        HttpResponse response = HttpResponse.redirect("/index.html");
+        response.addHeader(
+                "Set-Cookie",
+                "SID=" + sessionId + "; Path=/"
+        );
+        return response;
+    }
+
+    private boolean authenticate(User user, String password) {
+        return user != null && user.getPassword().equals(password);
     }
 
     private String getFirst(Map<String, String[]> params, String key) {
