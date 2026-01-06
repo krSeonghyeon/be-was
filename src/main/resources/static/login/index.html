@@ -6,6 +6,12 @@
     <link href="../reset.css" rel="stylesheet" />
     <link href="../global.css" rel="stylesheet" />
   </head>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "true") {
+      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
+  </script>
   <body>
     <div class="container">
       <header class="header">

@@ -15,7 +15,7 @@ public class LogoutHandler implements Handler {
             SessionManager.invalidate(sessionId);
         }
 
-        HttpResponse response = HttpResponse.redirect("/login.html");
+        HttpResponse response = HttpResponse.redirect("/login");
         response.addHeader(
                 "Set-Cookie",
                 "SID=; Path=/; Max-Age=0"

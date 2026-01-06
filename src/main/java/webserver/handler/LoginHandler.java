@@ -26,7 +26,7 @@ public class LoginHandler implements Handler {
 
         User user = Database.findUserById(userId);
         if (!authenticate(user, password)) {
-            return HttpResponse.redirect("/login.html?error=true"); // TODO: 수정필요(에러메시지)
+            return HttpResponse.redirect("/login?error=true"); // TODO: 수정필요(에러메시지)
         }
 
         String sessionId = SessionManager.createSession(user);
