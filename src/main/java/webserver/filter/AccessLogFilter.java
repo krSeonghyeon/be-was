@@ -11,9 +11,10 @@ public class AccessLogFilter implements RequestFilter {
     private static final Logger log = LoggerFactory.getLogger("ACCESS_LOG");
 
     @Override
-    public void doFilter(HttpRequest request) {
-        StringBuilder sb = new StringBuilder();
+    public void doFilter(HttpRequest request, FilterChain chain) throws Exception {
+        long start = System.currentTimeMillis();
 
+        StringBuilder sb = new StringBuilder();
         sb.append(request.method())
                 .append(" ")
                 .append(request.query().isEmpty() ? request.path() : request.path() + "?" + request.query())
@@ -28,6 +29,11 @@ public class AccessLogFilter implements RequestFilter {
                     .append("\n");
         }
 
-        log.debug(sb.toString());
+        try {
+            chain.doFilter(request);
+        } finally {
+            long gap = System.currentTimeMillis() - start;
+            log.debug(sb.append("Elapsed: ").append(gap).append("ms").toString());
+        }
     }
 }

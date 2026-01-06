@@ -4,5 +4,5 @@ import webserver.http.HttpRequest;
 
 public interface RequestFilter {
 
-    void doFilter(HttpRequest request);
+    void doFilter(HttpRequest request, FilterChain chain) throws Exception;
 }

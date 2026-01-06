@@ -7,7 +7,7 @@ public class AuthInterceptor implements HandlerInterceptor{
 
     @Override
     public boolean preHandle(HttpRequest request) {
-        return true;
+        return true; // TODO: 추후 인증로직추가
     }
 
     @Override

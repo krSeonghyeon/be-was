@@ -1,5 +1,6 @@
 package webserver.config;
 
+import webserver.core.Dispatcher;
 import webserver.dispatch.*;
 import webserver.filter.AccessLogFilter;
 import webserver.filter.RequestFilter;
@@ -15,6 +16,13 @@ public class AppConfig {
 
     private final Router router = createRouter();
     private final StaticResourceHandler staticResourceHandler = new StaticResourceHandler();
+
+    public Dispatcher dispatcher() {
+        return new Dispatcher(
+                handlerMappings(),
+                handlerAdapters()
+        );
+    }
 
     public List<HandlerMapping> handlerMappings() {
         return List.of(

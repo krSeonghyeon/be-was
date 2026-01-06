@@ -37,9 +37,8 @@ public class WebServer {
                 executor.submit(
                         new RequestHandler(
                                 connection,
-                                config.handlerMappings(),
-                                config.handlerAdapters(),
-                                config.requestFilters()
+                                config.requestFilters(),
+                                config.dispatcher()
                         )
                 );
             }
