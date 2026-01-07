@@ -26,7 +26,7 @@ public class AppConfig {
 
     public List<HandlerMapping> handlerMappings() {
         return List.of(
-                new RouterHandlerMapping(router, interceptors()), // 인터셉터 추가필요
+                new RouterHandlerMapping(router, interceptors()),
                 new StaticResourceHandlerMapping(staticResourceHandler)
         );
     }
@@ -55,6 +55,9 @@ public class AppConfig {
         router.register("POST", "/create", new CreateUserHandler());
         router.register("POST", "/login", new LoginHandler());
         router.register("POST", "/logout", new LogoutHandler());
+//        router.register("GET", "/", new IndexHandler());
+//        router.register("GET", "/index.html", new IndexHandler()); // TODO: /index 대해 확인필요
+//        router.register("GET", "/mypage", new MyPageHandler());
         return router;
     }
 

@@ -15,7 +15,7 @@ public class StaticResourceHandlerMapping implements HandlerMapping {
 
     @Override
     public HandlerExecutionChain getHandler(HttpRequest request) {
-        if (!staticResourceHandler.exists(request.path())) {
+        if (!staticResourceHandler.exists(request.getPath())) {
             return null;
         }
 

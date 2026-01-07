@@ -4,6 +4,7 @@ import db.Database;
 import model.user.User;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 import webserver.http.QueryStringParser;
 import webserver.router.Handler;
 
@@ -12,8 +13,8 @@ import java.util.Map;
 public class CreateUserHandler implements Handler {
 
     @Override
-    public HttpResponse handle(HttpRequest request) {
-        String body = new String(request.body());
+    public void handle(HttpRequest request, HttpResponse response) {
+        String body = new String(request.getBody());
         Map<String, String[]> params = QueryStringParser.parse(body);
 
         String userId = getFirst(params, "userId");
@@ -21,12 +22,14 @@ public class CreateUserHandler implements Handler {
         String name = getFirst(params, "name");
 
         if (userId == null || password == null || name == null) {
-            return HttpResponse.badRequest();
+            response.setStatus(HttpStatus.NOT_FOUND);
+            return;
         }
 
         User user = new User(userId, password, name);
         Database.addUser(user);
-        return HttpResponse.redirect("/index.html");
+        response.setStatus(HttpStatus.FOUND);
+        response.setHeader("Location", "/index.html");
     }
 
     private String getFirst(Map<String, String[]> params, String key) {

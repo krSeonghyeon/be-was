@@ -9,5 +9,5 @@ public interface HandlerAdapter {
 
     boolean supports(Object handler);
 
-    HttpResponse handle(HttpRequest request, Object handler) throws IOException;
+    void handle(HttpRequest request, HttpResponse response, Object handler) throws IOException;
 }

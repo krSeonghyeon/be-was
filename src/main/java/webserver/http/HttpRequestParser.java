@@ -32,7 +32,7 @@ public class HttpRequestParser {
 
         Map<String, String> headers = new HashMap<>();
         String line;
-        while((line = br.readLine()) != null && !line.isEmpty()) {
+        while ((line = br.readLine()) != null && !line.isEmpty()) {
             String[] parts = line.split(":", 2);
             headers.put(parts[0].trim().toLowerCase(), parts[1].trim());
         }

@@ -2,6 +2,7 @@ package webserver.staticresource;
 
 import webserver.http.ContentType;
 import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 
 import java.io.*;
 
@@ -13,11 +14,12 @@ public class StaticResourceHandler {
         return resolve(path).exists();
     }
 
-    public HttpResponse handle(String path) throws IOException {
+    public void handle(String path, HttpResponse response) throws IOException {
         File file = resolve(path);
 
         if (!file.exists()) {
-            return HttpResponse.notFound();
+            response.setStatus(HttpStatus.NOT_FOUND);
+            return;
         }
 
         byte[] body;
@@ -26,7 +28,11 @@ public class StaticResourceHandler {
         }
 
         ContentType contentType = ContentType.fromFileName(file.getName());
-        return HttpResponse.ok(body, contentType.getMimeType());
+
+        response.setStatus(HttpStatus.OK);
+        response.setBody(body);
+        response.setHeader("Content-Type", contentType.getMimeType()); // MessageConverter?
+        response.setHeader("Content-Length", String.valueOf(body.length));
     }
 
     private File resolve(String path) {

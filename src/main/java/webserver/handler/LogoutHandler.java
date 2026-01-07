@@ -2,25 +2,25 @@ package webserver.handler;
 
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 import webserver.router.Handler;
 import webserver.session.SessionManager;
 
 public class LogoutHandler implements Handler {
 
     @Override
-    public HttpResponse handle(HttpRequest request) {
+    public void handle(HttpRequest request, HttpResponse response) {
         String sessionId = request.getCookie("SID");
 
         if (sessionId != null) {
             SessionManager.invalidate(sessionId);
         }
 
-        HttpResponse response = HttpResponse.redirect("/login");
-        response.addHeader(
+        response.setStatus(HttpStatus.FOUND);
+        response.setHeader("Location", "/login");
+        response.setHeader(
                 "Set-Cookie",
                 "SID=; Path=/; Max-Age=0"
         );
-
-        return response;
     }
 }

@@ -12,7 +12,7 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request, Object handler) {
-        return ((Handler) handler).handle(request);
+    public void handle(HttpRequest request, HttpResponse response, Object handler) {
+        ((Handler) handler).handle(request, response);
     }
 }

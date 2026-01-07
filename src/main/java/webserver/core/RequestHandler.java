@@ -11,6 +11,7 @@ import webserver.filter.FilterChain;
 import webserver.filter.RequestFilter;
 import webserver.http.HttpRequest;
 import webserver.http.HttpRequestParser;
+import webserver.http.HttpResponse;
 
 public class RequestHandler implements Runnable {
 
@@ -40,23 +41,22 @@ public class RequestHandler implements Runnable {
              DataOutputStream dos = new DataOutputStream(out);
         ) {
             HttpRequest request = HttpRequestParser.parser(br);
+            HttpResponse response = new HttpResponse();
             if (request == null) {
                 return;
             }
-
             FilterChain chain = new DefaultFilterChain(
                     filters,
                     () -> {
                         try {
-                            dispatcher.dispatch(request, dos);
+                            dispatcher.dispatch(request, response);
+                            response.writeTo(dos);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
                     }
             );
-
             chain.doFilter(request);
-
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

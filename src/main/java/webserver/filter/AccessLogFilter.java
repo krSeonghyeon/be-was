@@ -15,14 +15,14 @@ public class AccessLogFilter implements RequestFilter {
         long start = System.currentTimeMillis();
 
         StringBuilder sb = new StringBuilder();
-        sb.append(request.method())
+        sb.append(request.getMethod())
                 .append(" ")
-                .append(request.query().isEmpty() ? request.path() : request.path() + "?" + request.query())
+                .append(request.getQuery().isEmpty() ? request.getPath() : request.getPath() + "?" + request.getQuery())
                 .append(" ")
-                .append(request.httpVersion())
+                .append(request.getHttpVersion())
                 .append("\n");
 
-        for (Map.Entry<String, String> header : request.headers().entrySet()) {
+        for (Map.Entry<String, String> header : request.getHeaders().entrySet()) {
             sb.append(header.getKey())
                     .append(": ")
                     .append(header.getValue())

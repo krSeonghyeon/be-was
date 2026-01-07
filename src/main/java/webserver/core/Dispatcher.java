@@ -5,8 +5,8 @@ import webserver.dispatch.HandlerExecutionChain;
 import webserver.dispatch.HandlerMapping;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 
-import java.io.DataOutputStream;
 import java.util.List;
 
 public class Dispatcher {
@@ -19,32 +19,30 @@ public class Dispatcher {
         this.handlerAdapters = handlerAdapters;
     }
 
-    public void dispatch(HttpRequest request, DataOutputStream dos) throws Exception {
+    public void dispatch(HttpRequest request, HttpResponse response) throws Exception {
         HandlerExecutionChain chain = getHandlerExecutionChain(request);
-        HttpResponse response;
 
         if (chain == null) {
-            response = HttpResponse.notFound();
-        } else {
-            Exception dispatchException = null;
-            try {
-                if (!chain.applyPreHandle(request)) {
-                    response = HttpResponse.forbidden();
-                } else {
-                    Object handler = chain.getHandler();
-                    HandlerAdapter adapter = getHandlerAdapter(handler);
-                    response = adapter.handle(request, handler);
-                    chain.applyPostHandle(request, response);
-                }
-            } catch (Exception e) {
-                dispatchException = e;
-                throw e;
-            } finally {
-                chain.triggerAfterCompletion(request, dispatchException);
-            }
+            response.setStatus(HttpStatus.NOT_FOUND);
+            return;
         }
 
-        response.writeTo(dos);
+        Exception dispatchException = null;
+
+        try {
+            if (!chain.applyPreHandle(request, response)) {
+                return;
+            }
+            Object handler = chain.getHandler();
+            HandlerAdapter adapter = getHandlerAdapter(handler);
+            adapter.handle(request, response, handler);
+            chain.applyPostHandle(request, response);
+        } catch (Exception e) {
+            dispatchException = e;
+            throw e;
+        } finally {
+            chain.triggerAfterCompletion(request, dispatchException);
+        }
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {

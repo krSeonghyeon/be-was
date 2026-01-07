@@ -14,7 +14,7 @@ public class StaticResourceHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request, Object handler) throws IOException {
-        return ((StaticResourceHandler) handler).handle(request.path());
+    public void handle(HttpRequest request, HttpResponse response, Object handler) throws IOException {
+        ((StaticResourceHandler) handler).handle(request.getPath(), response);
     }
 }

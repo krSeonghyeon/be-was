@@ -5,7 +5,7 @@ import webserver.http.HttpResponse;
 
 public interface HandlerInterceptor {
 
-    boolean preHandle(HttpRequest request);
+    boolean preHandle(HttpRequest request, HttpResponse response, Object handler);
 
     void postHandle(HttpRequest request, HttpResponse response);
 

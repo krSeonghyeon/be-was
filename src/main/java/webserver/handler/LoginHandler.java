@@ -4,6 +4,7 @@ import db.Database;
 import model.user.User;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 import webserver.http.QueryStringParser;
 import webserver.router.Handler;
 import webserver.session.SessionManager;
@@ -13,29 +14,32 @@ import java.util.Map;
 public class LoginHandler implements Handler {
 
     @Override
-    public HttpResponse handle(HttpRequest request) {
-        String body = new String(request.body());
+    public void handle(HttpRequest request, HttpResponse response) {
+        String body = new String(request.getBody());
         Map<String, String[]> params = QueryStringParser.parse(body);
 
         String userId = getFirst(params, "userId");
         String password = getFirst(params, "password");
 
         if (userId == null || password == null) {
-            return HttpResponse.badRequest();
+            response.setStatus(HttpStatus.NOT_FOUND);
+            return;
         }
 
         User user = Database.findUserById(userId);
         if (!authenticate(user, password)) {
-            return HttpResponse.redirect("/login?error=true"); // TODO: 수정필요(에러메시지)
+            response.setStatus(HttpStatus.FOUND);
+            response.setHeader("Location", "/login?error=true");
+            return;
         }
 
         String sessionId = SessionManager.createSession(user);
-        HttpResponse response = HttpResponse.redirect("/index.html");
-        response.addHeader(
+        response.setStatus(HttpStatus.FOUND);
+        response.setHeader("Location", "/");
+        response.setHeader(
                 "Set-Cookie",
                 "SID=" + sessionId + "; Path=/"
         );
-        return response;
     }
 
     private boolean authenticate(User user, String password) {
