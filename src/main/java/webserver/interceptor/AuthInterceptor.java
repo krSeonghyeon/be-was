@@ -11,19 +11,19 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpRequest request, HttpResponse response, Object handler) {
 
-//        User user = getUser(request);
-//
-//        if (user != null) {
-//            request.setAttribute("USER", user); // TODO: ArguementResolver로 분리
-//        }
-//
-//        if (isProtectedPath(request.getPath())) {
-//            if (user == null) {
-//                response.setStatus(HttpStatus.FOUND);
-//                response.setHeader("Location", "/login");
-//                return false;
-//            }
-//        }
+        User user = getUser(request);
+
+        if (user != null) {
+            request.setAttribute("USER", user); // TODO: ArguementResolver로 분리
+        }
+
+        if (isProtectedPath(request.getPath())) {
+            if (user == null) {
+                response.setStatus(HttpStatus.FOUND);
+                response.setHeader("Location", "/login");
+                return false;
+            }
+        }
 
         return true;
     }

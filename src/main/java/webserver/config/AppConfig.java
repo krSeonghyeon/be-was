@@ -9,13 +9,15 @@ import webserver.interceptor.AuthInterceptor;
 import webserver.interceptor.HandlerInterceptor;
 import webserver.router.Router;
 import webserver.staticresource.StaticResourceHandler;
+import webserver.view.TemplateRenderer;
 
 import java.util.List;
 
 public class AppConfig {
 
-    private final Router router = createRouter();
     private final StaticResourceHandler staticResourceHandler = new StaticResourceHandler();
+    private final TemplateRenderer templateRenderer = new TemplateRenderer();
+    private final Router router = createRouter();
 
     public Dispatcher dispatcher() {
         return new Dispatcher(
@@ -55,10 +57,8 @@ public class AppConfig {
         router.register("POST", "/create", new CreateUserHandler());
         router.register("POST", "/login", new LoginHandler());
         router.register("POST", "/logout", new LogoutHandler());
-//        router.register("GET", "/", new IndexHandler());
-//        router.register("GET", "/index.html", new IndexHandler()); // TODO: /index 대해 확인필요
+        router.register("GET", "/", new IndexHandler(templateRenderer));
 //        router.register("GET", "/mypage", new MyPageHandler());
         return router;
     }
-
 }
