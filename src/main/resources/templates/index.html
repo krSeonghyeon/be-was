@@ -15,9 +15,9 @@
     <ul class="header__menu">
       {{#if isLogin}}
       <li class="header__menu__item">
-            <span class="btn btn_contained btn_size_s header__username">
-              {{username}}
-            </span>
+        <a href="/mypage" class="btn btn_contained btn_size_s header__username">
+          {{username}}
+        </a>
       </li>
       <li class="header__menu__item">
         <form method="post" action="/logout" class="header__logout-form">
