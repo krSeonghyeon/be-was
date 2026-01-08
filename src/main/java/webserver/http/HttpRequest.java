@@ -12,7 +12,7 @@ public class HttpRequest {
     private Map<String, String> headers = new HashMap<>();
     private byte[] body;
 
-    private Map<String, Object> attributes; // TODO: ArgumentResolver로 바꾸기
+    private Map<String, Object> attributes = new HashMap<>(); // TODO: ArgumentResolver로 바꾸기
 
     public HttpRequest(
             String method,

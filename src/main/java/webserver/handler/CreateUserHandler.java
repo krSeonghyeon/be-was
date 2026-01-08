@@ -29,7 +29,7 @@ public class CreateUserHandler implements Handler {
         User user = new User(userId, password, name);
         Database.addUser(user);
         response.setStatus(HttpStatus.FOUND);
-        response.setHeader("Location", "/index.html");
+        response.setHeader("Location", "/");
     }
 
     private String getFirst(Map<String, String[]> params, String key) {

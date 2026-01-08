@@ -4,7 +4,7 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
 import webserver.router.Handler;
-import webserver.session.SessionManager;
+import db.SessionManager;
 
 public class LogoutHandler implements Handler {
 

@@ -1,4 +1,4 @@
-package webserver.session;
+package db;
 
 import model.user.User;
 

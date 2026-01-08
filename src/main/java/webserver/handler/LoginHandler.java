@@ -7,7 +7,7 @@ import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
 import webserver.http.QueryStringParser;
 import webserver.router.Handler;
-import webserver.session.SessionManager;
+import db.SessionManager;
 
 import java.util.Map;
 

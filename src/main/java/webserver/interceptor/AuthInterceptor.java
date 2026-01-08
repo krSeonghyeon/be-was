@@ -4,7 +4,7 @@ import model.user.User;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
-import webserver.session.SessionManager;
+import db.SessionManager;
 
 public class AuthInterceptor implements HandlerInterceptor {
 
