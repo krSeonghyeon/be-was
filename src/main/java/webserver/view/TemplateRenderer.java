@@ -14,8 +14,11 @@ public class TemplateRenderer {
             Pattern.compile("\\{\\{(\\w+)}}");
 
     public String render(String templatePath, Map<String, Object> model) {
-        String html = load(templatePath);
+        if (model == null) {
+            model = Map.of();
+        }
 
+        String html = load(templatePath);
         if (html == null) return null; // null 반환되면 path를 못찾은 것, 404 처리 필요
 
         html = renderIf(html, model);
@@ -73,13 +76,14 @@ public class TemplateRenderer {
     }
 
     private String load(String templatePath) {
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("templates/" + templatePath)) {
-            // TODO : 패키지내부 패키지 처리 필요 (/templates/mypage/index.html) 등
+        String resolvedPath = templatePath;
 
-            if (is == null) {
-                return null;
-            }
+        if (!templatePath.endsWith(".html")) {
+            resolvedPath = templatePath + "/index.html";
+        }
 
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("templates/" + resolvedPath)) {
+            if (is == null) return null;
             return new String(is.readAllBytes());
         } catch (Exception e) {
             throw new RuntimeException(e);
