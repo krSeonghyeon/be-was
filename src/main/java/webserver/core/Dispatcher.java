@@ -6,6 +6,9 @@ import webserver.dispatch.HandlerMapping;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
+import webserver.view.ModelAndView;
+import webserver.view.View;
+import webserver.view.ViewResolver;
 
 import java.util.List;
 
@@ -13,10 +16,16 @@ public class Dispatcher {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private final ViewResolver viewResolver;
 
-    public Dispatcher(List<HandlerMapping> handlerMappings, List<HandlerAdapter> handlerAdapters) {
+    public Dispatcher(
+            List<HandlerMapping> handlerMappings,
+            List<HandlerAdapter> handlerAdapters,
+            ViewResolver viewResolver
+    ) {
         this.handlerMappings = handlerMappings;
         this.handlerAdapters = handlerAdapters;
+        this.viewResolver = viewResolver;
     }
 
     public void dispatch(HttpRequest request, HttpResponse response) throws Exception {
@@ -28,6 +37,7 @@ public class Dispatcher {
         }
 
         Exception dispatchException = null;
+        ModelAndView mv = null;
 
         try {
             if (!chain.applyPreHandle(request, response)) {
@@ -35,7 +45,8 @@ public class Dispatcher {
             }
             Object handler = chain.getHandler();
             HandlerAdapter adapter = getHandlerAdapter(handler);
-            adapter.handle(request, response, handler);
+
+            mv = adapter.handle(request, response, handler);
             chain.applyPostHandle(request, response);
         } catch (Exception e) {
             dispatchException = e;
@@ -43,6 +54,14 @@ public class Dispatcher {
         } finally {
             chain.triggerAfterCompletion(request, dispatchException);
         }
+
+        render(mv, request, response);
+    }
+
+    private void render(ModelAndView mv, HttpRequest request, HttpResponse response) {
+        if (mv == null) return; // response 출력한 경우 뷰렌더링 스킵
+        View view = viewResolver.resolveViewName(mv.getViewName());
+        view.render(mv.getModel(), request, response);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {

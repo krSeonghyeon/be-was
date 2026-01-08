@@ -6,14 +6,14 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
 import webserver.http.QueryStringParser;
-import webserver.router.Handler;
+import webserver.view.ModelAndView;
 
 import java.util.Map;
 
 public class CreateUserHandler implements Handler {
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response) {
+    public ModelAndView handle(HttpRequest request, HttpResponse response) {
         String body = new String(request.getBody());
         Map<String, String[]> params = QueryStringParser.parse(body);
 
@@ -22,14 +22,14 @@ public class CreateUserHandler implements Handler {
         String name = getFirst(params, "name");
 
         if (userId == null || password == null || name == null) {
-            response.setStatus(HttpStatus.NOT_FOUND);
-            return;
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            return null;
         }
 
         User user = new User(userId, password, name);
         Database.addUser(user);
-        response.setStatus(HttpStatus.FOUND);
-        response.setHeader("Location", "/");
+
+        return new ModelAndView("redirect:/");
     }
 
     private String getFirst(Map<String, String[]> params, String key) {

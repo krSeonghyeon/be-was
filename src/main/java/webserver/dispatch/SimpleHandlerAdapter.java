@@ -2,7 +2,8 @@ package webserver.dispatch;
 
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.router.Handler;
+import webserver.handler.Handler;
+import webserver.view.ModelAndView;
 
 public class SimpleHandlerAdapter implements HandlerAdapter {
 
@@ -12,7 +13,7 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response, Object handler) {
-        ((Handler) handler).handle(request, response);
+    public ModelAndView handle(HttpRequest request, HttpResponse response, Object handler) {
+        return ((Handler) handler).handle(request, response);
     }
 }

@@ -3,6 +3,7 @@ package webserver.dispatch;
 import webserver.staticresource.StaticResourceHandler;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
+import webserver.view.ModelAndView;
 
 import java.io.IOException;
 
@@ -14,7 +15,8 @@ public class StaticResourceHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response, Object handler) throws IOException {
+    public ModelAndView handle(HttpRequest request, HttpResponse response, Object handler) throws IOException {
         ((StaticResourceHandler) handler).handle(request.getPath(), response);
+        return null;
     }
 }

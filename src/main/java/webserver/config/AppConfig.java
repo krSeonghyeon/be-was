@@ -10,6 +10,7 @@ import webserver.interceptor.HandlerInterceptor;
 import webserver.router.Router;
 import webserver.staticresource.StaticResourceHandler;
 import webserver.view.TemplateRenderer;
+import webserver.view.ViewResolver;
 
 import java.util.List;
 
@@ -17,12 +18,14 @@ public class AppConfig {
 
     private final StaticResourceHandler staticResourceHandler = new StaticResourceHandler();
     private final TemplateRenderer templateRenderer = new TemplateRenderer();
+    private final ViewResolver viewResolver = new ViewResolver(templateRenderer);
     private final Router router = createRouter();
 
     public Dispatcher dispatcher() {
         return new Dispatcher(
                 handlerMappings(),
-                handlerAdapters()
+                handlerAdapters(),
+                viewResolver
         );
     }
 
@@ -57,8 +60,8 @@ public class AppConfig {
         router.register("POST", "/create", new CreateUserHandler());
         router.register("POST", "/login", new LoginHandler());
         router.register("POST", "/logout", new LogoutHandler());
-        router.register("GET", "/", new IndexHandler(templateRenderer));
-        router.register("GET", "/mypage", new MyPageHandler(templateRenderer));
+        router.register("GET", "/", new IndexHandler());
+        router.register("GET", "/mypage", new MyPageHandler());
         return router;
     }
 }

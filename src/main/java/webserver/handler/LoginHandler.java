@@ -6,15 +6,15 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
 import webserver.http.QueryStringParser;
-import webserver.router.Handler;
 import db.SessionManager;
+import webserver.view.ModelAndView;
 
 import java.util.Map;
 
 public class LoginHandler implements Handler {
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response) {
+    public ModelAndView handle(HttpRequest request, HttpResponse response) {
         String body = new String(request.getBody());
         Map<String, String[]> params = QueryStringParser.parse(body);
 
@@ -23,23 +23,21 @@ public class LoginHandler implements Handler {
 
         if (userId == null || password == null) {
             response.setStatus(HttpStatus.NOT_FOUND);
-            return;
+            return null;
         }
 
         User user = Database.findUserById(userId);
         if (!authenticate(user, password)) {
-            response.setStatus(HttpStatus.FOUND);
-            response.setHeader("Location", "/login?error=true");
-            return;
+            return new ModelAndView("redirect:/login?error=true");
         }
 
         String sessionId = SessionManager.createSession(user);
-        response.setStatus(HttpStatus.FOUND);
-        response.setHeader("Location", "/");
         response.setHeader(
                 "Set-Cookie",
                 "SID=" + sessionId + "; Path=/"
         );
+
+        return new ModelAndView("redirect:/");
     }
 
     private boolean authenticate(User user, String password) {
