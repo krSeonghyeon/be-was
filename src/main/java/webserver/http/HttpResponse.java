@@ -27,6 +27,10 @@ public class HttpResponse {
         this.body = body;
     }
 
+    public HttpStatus getStatus() {
+        return status;
+    }
+
     public void writeTo(DataOutputStream dos) throws IOException {
         dos.writeBytes(
                 "HTTP/1.1 " +

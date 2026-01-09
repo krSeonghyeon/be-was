@@ -1,9 +1,11 @@
 package webserver.config;
 
-import webserver.argument.ArgumentResolver;
-import webserver.argument.CurrentUserArgumentResolver;
+import webserver.argument.resolver.ArgumentResolver;
+import webserver.argument.resolver.CurrentUserArgumentResolver;
 import webserver.core.Dispatcher;
 import webserver.dispatch.*;
+import webserver.exception.BasicExceptionHandler;
+import webserver.exception.HandlerExceptionResolver;
 import webserver.filter.AccessLogFilter;
 import webserver.filter.RequestFilter;
 import webserver.handler.*;
@@ -27,6 +29,7 @@ public class AppConfig {
         return new Dispatcher(
                 handlerMappings(),
                 handlerAdapters(),
+                exceptionResolvers(),
                 viewResolver
         );
     }
@@ -46,6 +49,12 @@ public class AppConfig {
         return List.of(
                 new SimpleHandlerAdapter(resolvers),
                 new StaticResourceHandlerAdapter()
+        );
+    }
+
+    public List<HandlerExceptionResolver> exceptionResolvers() {
+        return List.of(
+                new BasicExceptionHandler()
         );
     }
 

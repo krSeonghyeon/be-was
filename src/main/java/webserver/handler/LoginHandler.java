@@ -2,9 +2,9 @@ package webserver.handler;
 
 import db.Database;
 import model.user.User;
+import webserver.exception.BadRequestException;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
-import webserver.http.HttpStatus;
 import webserver.http.QueryStringParser;
 import db.SessionManager;
 import webserver.view.ModelAndView;
@@ -21,8 +21,7 @@ public class LoginHandler implements Handler {
         String password = getFirst(params, "password");
 
         if (userId == null || password == null) {
-            response.setStatus(HttpStatus.NOT_FOUND);
-            return null;
+            throw new BadRequestException("Missing parameter");
         }
 
         User user = Database.findUserById(userId);

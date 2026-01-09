@@ -1,4 +1,4 @@
-package webserver.argument;
+package webserver.argument.resolver;
 
 import model.user.User;
 import webserver.argument.annotation.CurrentUser;

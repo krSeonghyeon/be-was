@@ -1,4 +1,4 @@
-package webserver.argument;
+package webserver.argument.resolver;
 
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;

@@ -25,7 +25,10 @@ public class HtmlView implements View {
             return;
         }
 
-        response.setStatus(HttpStatus.OK);
+        if (response.getStatus() == null) {
+            response.setStatus(HttpStatus.OK);
+        }
+
         response.setHeader("Content-Type", "text/html");
         response.setBody(html.getBytes());
     }

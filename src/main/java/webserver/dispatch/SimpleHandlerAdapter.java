@@ -1,6 +1,6 @@
 package webserver.dispatch;
 
-import webserver.argument.ArgumentResolver;
+import webserver.argument.resolver.ArgumentResolver;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.handler.Handler;
