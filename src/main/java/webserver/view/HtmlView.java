@@ -20,11 +20,6 @@ public class HtmlView implements View {
     public void render(Map<String, Object> model, HttpRequest request, HttpResponse response) {
         String html = renderer.render(viewName, model);
 
-        if (html == null) {
-            response.setStatus(HttpStatus.NOT_FOUND);
-            return;
-        }
-
         if (response.getStatus() == null) {
             response.setStatus(HttpStatus.OK);
         }
