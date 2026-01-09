@@ -7,7 +7,6 @@ import webserver.view.ModelAndView;
 
 public class LogoutHandler implements Handler {
 
-    @Override
     public ModelAndView handle(HttpRequest request, HttpResponse response) {
         String sessionId = request.getCookie("SID");
 

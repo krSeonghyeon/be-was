@@ -1,5 +1,7 @@
 package webserver.config;
 
+import webserver.argument.ArgumentResolver;
+import webserver.argument.CurrentUserArgumentResolver;
 import webserver.core.Dispatcher;
 import webserver.dispatch.*;
 import webserver.filter.AccessLogFilter;
@@ -37,8 +39,12 @@ public class AppConfig {
     }
 
     public List<HandlerAdapter> handlerAdapters() {
+        List<ArgumentResolver> resolvers = List.of(
+                new CurrentUserArgumentResolver()
+        );
+
         return List.of(
-                new SimpleHandlerAdapter(),
+                new SimpleHandlerAdapter(resolvers),
                 new StaticResourceHandlerAdapter()
         );
     }

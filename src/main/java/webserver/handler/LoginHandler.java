@@ -13,7 +13,6 @@ import java.util.Map;
 
 public class LoginHandler implements Handler {
 
-    @Override
     public ModelAndView handle(HttpRequest request, HttpResponse response) {
         String body = new String(request.getBody());
         Map<String, String[]> params = QueryStringParser.parse(body);

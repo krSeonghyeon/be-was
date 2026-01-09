@@ -12,7 +12,6 @@ import java.util.Map;
 
 public class CreateUserHandler implements Handler {
 
-    @Override
     public ModelAndView handle(HttpRequest request, HttpResponse response) {
         String body = new String(request.getBody());
         Map<String, String[]> params = QueryStringParser.parse(body);
