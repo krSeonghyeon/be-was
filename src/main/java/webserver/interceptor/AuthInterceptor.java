@@ -14,7 +14,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         User user = getUser(request);
 
         if (user != null) {
-            request.setAttribute("USER", user); // TODO: ArguementResolver로 분리
+            request.setAttribute("USER", user);
         }
 
         if (isProtectedPath(request.getPath())) {
@@ -35,7 +35,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private boolean isProtectedPath(String path) {
-        return path.startsWith("/mypage");
+        return path.startsWith("/mypage") || path.startsWith("/article");
     }
 
     @Override

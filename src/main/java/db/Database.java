@@ -1,5 +1,6 @@
 package db;
 
+import model.article.Article;
 import model.user.User;
 
 import java.util.Collection;
@@ -17,7 +18,22 @@ public class Database {
         return users.get(userId);
     }
 
-    public static Collection<User> findAll() {
+    public static Collection<User> findUserAll() {
         return users.values();
+    }
+
+    // 추후 분리
+    private static Map<String, Article> articles = new HashMap<>();
+
+    public static void addArticle(Article article) {
+        articles.put(article.getArticleId(), article);
+    }
+
+    public static Article findArticleById(String articleId) {
+        return articles.get(articleId);
+    }
+
+    public static Collection<Article> findArticleAll() {
+        return articles.values();
     }
 }

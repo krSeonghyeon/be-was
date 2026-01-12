@@ -75,8 +75,10 @@ public class AppConfig {
         router.register("POST", "/create", new CreateUserHandler());
         router.register("POST", "/login", new LoginHandler());
         router.register("POST", "/logout", new LogoutHandler());
+        router.register("POST", "/article", new CreateArticleHandler());
         router.register("GET", "/", new IndexHandler());
         router.register("GET", "/mypage", new MyPageHandler());
+        router.register("GET", "/article", new ArticlePageHandler());
         return router;
     }
 }
