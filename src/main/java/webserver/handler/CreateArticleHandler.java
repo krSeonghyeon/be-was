@@ -4,32 +4,31 @@ import db.Database;
 import model.article.Article;
 import webserver.exception.BadRequestException;
 import webserver.http.HttpRequest;
-import webserver.http.QueryStringParser;
+import webserver.http.MultipartParser;
+import webserver.http.MultipartResult;
+import webserver.http.UploadFile;
 import webserver.view.ModelAndView;
-
-import java.util.Map;
 
 public class CreateArticleHandler implements Handler {
 
     public ModelAndView handle(HttpRequest request) {
-        String body = new String(request.getBody());
-        Map<String, String[]> params = QueryStringParser.parse(body);
+        // TODO: 일단 내부에서 처리하도록 한뒤 추후 content-type에 따라 앞단에서 처리하도록 수정하기
 
-        String content = getFirst(params, "content");
+        MultipartResult result = MultipartParser.parse(request);
+
+        String content = result.fields().get("content");
+        UploadFile image = result.files().get("image");
 
         if (content == null) {
             throw new BadRequestException("Missing parameter");
         }
+
+        // TODO: 이미지 저장 로직 추가하기
 
         String newId = String.valueOf(Database.findArticleAll().size() + 1);
         Article article = new Article(newId, content);
         Database.addArticle(article);
 
         return new ModelAndView("redirect:/");
-    }
-
-    private String getFirst(Map<String, String[]> params, String key) {
-        String[] values = params.get(key);
-        return (values == null || values.length == 0) ? null : values[0];
     }
 }
