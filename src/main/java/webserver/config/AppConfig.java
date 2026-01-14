@@ -81,6 +81,7 @@ public class AppConfig {
         router.register("GET", "/", new IndexHandler());
         router.register("GET", "/mypage", new MyPageHandler());
         router.register("GET", "/article", new ArticlePageHandler());
+        router.register("GET", "/comment", new CommentHandler());
         return router;
     }
 }

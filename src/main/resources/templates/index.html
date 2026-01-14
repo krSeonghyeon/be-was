@@ -15,9 +15,10 @@
     <ul class="header__menu">
       {{#if isLogin}}
       <li class="header__menu__item">
-        <a href="/mypage" class="btn btn_contained btn_size_s header__username">
-          {{username}}
-        </a>
+        안녕하세요, {{username}}님!
+      </li>
+      <li class="header__menu__item">
+        <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
       </li>
       <li class="header__menu__item">
         <form method="post" action="/logout" class="header__logout-form">
@@ -149,7 +150,7 @@
           </a>
         </li>
         <li class="nav__menu__item">
-          <a class="btn btn_ghost btn_size_m">댓글 작성</a>
+          <a class="btn btn_ghost btn_size_m" href="/comment">댓글 작성</a>
         </li>
         <li class="nav__menu__item">
           <a class="nav__menu__item__btn" href="">
@@ -162,13 +163,6 @@
         </li>
       </ul>
     </nav>
-
-    <div class="write-bar">
-      <a class="btn btn_contained btn_size_m" href="/article">
-        글쓰기
-      </a>
-    </div>
-
   </div>
 </div>
 </body>

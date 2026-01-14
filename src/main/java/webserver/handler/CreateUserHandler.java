@@ -40,7 +40,7 @@ public class CreateUserHandler implements Handler {
         User user = new User(userId, password, name);
         userDatabase.save(user);
 
-        return new ModelAndView("redirect:/");
+        return new ModelAndView("redirect:/login");
     }
 
     private String getFirst(Map<String, String[]> params, String key) {

@@ -35,7 +35,9 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private boolean isProtectedPath(String path) {
-        return path.startsWith("/mypage") || path.startsWith("/article");
+        return path.startsWith("/mypage") ||
+                path.startsWith("/article") ||
+                path.startsWith("/comment");
     }
 
     @Override
