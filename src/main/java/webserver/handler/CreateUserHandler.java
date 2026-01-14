@@ -29,6 +29,14 @@ public class CreateUserHandler implements Handler {
             throw new BadRequestException("Missing parameter");
         }
 
+        if (userId.length() < 4 || password.length() < 4 || name.length() < 4) {
+            throw new BadRequestException("length < 4");
+        }
+
+        if (userDatabase.findById(userId) != null) {
+            throw new BadRequestException("not unique ID");
+        }
+
         User user = new User(userId, password, name);
         userDatabase.save(user);
 

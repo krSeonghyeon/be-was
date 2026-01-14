@@ -11,6 +11,7 @@ import webserver.view.ModelAndView;
 import webserver.view.View;
 import webserver.view.ViewResolver;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class Dispatcher {
@@ -49,12 +50,11 @@ public class Dispatcher {
             HandlerAdapter adapter = getHandlerAdapter(handler);
             mv = adapter.handle(request, response, handler);
             chain.applyPostHandle(request, response);
-        } catch (Exception e) {
-            dispatchException = e;
-            mv = processHandlerException(request, response, e);
-            if (mv == null) {
-                throw e;
-            }
+        }  catch (Exception e) {
+            Exception actualEx = unwrapInvocation(e);
+            dispatchException = actualEx;
+            mv = processHandlerException(request, response, actualEx);
+            if (mv == null) throw actualEx;
         } finally {
             if (chain != null) {
                 chain.triggerAfterCompletion(request, dispatchException);
@@ -62,6 +62,13 @@ public class Dispatcher {
         }
 
         render(mv, request, response);
+    }
+
+    private Exception unwrapInvocation(Exception e) {
+        if (e instanceof InvocationTargetException ite && ite.getCause() instanceof Exception cause) {
+            return cause;
+        }
+        return e;
     }
 
     private ModelAndView processHandlerException(HttpRequest request, HttpResponse response, Exception ex) {

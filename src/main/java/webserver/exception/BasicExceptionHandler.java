@@ -11,7 +11,6 @@ public class BasicExceptionHandler implements HandlerExceptionResolver {
 
     @Override
     public ModelAndView resolveException(HttpRequest request, HttpResponse response, Exception ex) {
-
         if (ex instanceof HttpException httpEx) {
             response.setStatus(httpEx.getStatus());
 

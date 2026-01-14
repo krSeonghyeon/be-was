@@ -25,14 +25,10 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpRequest request, HttpResponse response, Object handler) {
-        try {
-            Method handleMethod = findHandleMethod(handler);
-            Object[] args = resolveArguments(handleMethod, request, response);
-            return (ModelAndView) handleMethod.invoke(handler, args);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public ModelAndView handle(HttpRequest request, HttpResponse response, Object handler) throws Exception {
+        Method handleMethod = findHandleMethod(handler);
+        Object[] args = resolveArguments(handleMethod, request, response);
+        return (ModelAndView) handleMethod.invoke(handler, args);
     }
 
     private Method findHandleMethod(Object handler) {
