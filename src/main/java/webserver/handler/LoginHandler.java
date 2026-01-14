@@ -1,6 +1,6 @@
 package webserver.handler;
 
-import db.Database;
+import db.UserDatabase;
 import model.user.User;
 import webserver.exception.BadRequestException;
 import webserver.http.HttpRequest;
@@ -13,6 +13,12 @@ import java.util.Map;
 
 public class LoginHandler implements Handler {
 
+    private final UserDatabase userDatabase;
+
+    public LoginHandler(UserDatabase userDatabase) {
+        this.userDatabase = userDatabase;
+    }
+
     public ModelAndView handle(HttpRequest request, HttpResponse response) {
         String body = new String(request.getBody());
         Map<String, String[]> params = QueryStringParser.parse(body);
@@ -24,7 +30,7 @@ public class LoginHandler implements Handler {
             throw new BadRequestException("Missing parameter");
         }
 
-        User user = Database.findUserById(userId);
+        User user = userDatabase.findById(userId);
         if (!authenticate(user, password)) {
             return new ModelAndView("redirect:/login?error=true");
         }

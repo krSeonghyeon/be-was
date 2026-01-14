@@ -1,6 +1,6 @@
 package webserver.handler;
 
-import db.Database;
+import db.UserDatabase;
 import model.user.User;
 import webserver.exception.BadRequestException;
 import webserver.http.HttpRequest;
@@ -10,6 +10,12 @@ import webserver.view.ModelAndView;
 import java.util.Map;
 
 public class CreateUserHandler implements Handler {
+
+    private final UserDatabase userDatabase;
+
+    public CreateUserHandler(UserDatabase userDatabase) {
+        this.userDatabase = userDatabase;
+    }
 
     public ModelAndView handle(HttpRequest request) {
         String body = new String(request.getBody());
@@ -24,7 +30,7 @@ public class CreateUserHandler implements Handler {
         }
 
         User user = new User(userId, password, name);
-        Database.addUser(user);
+        userDatabase.save(user);
 
         return new ModelAndView("redirect:/");
     }

@@ -1,6 +1,6 @@
 package webserver.handler;
 
-import db.Database;
+import db.ArticleDatabase;
 import model.article.Article;
 import webserver.exception.BadRequestException;
 import webserver.http.HttpRequest;
@@ -10,6 +10,12 @@ import webserver.http.UploadFile;
 import webserver.view.ModelAndView;
 
 public class CreateArticleHandler implements Handler {
+
+    private final ArticleDatabase articleDatabase;
+
+    public CreateArticleHandler(ArticleDatabase articleDatabase) {
+        this.articleDatabase = articleDatabase;
+    }
 
     public ModelAndView handle(HttpRequest request) {
         // TODO: 일단 내부에서 처리하도록 한뒤 추후 content-type에 따라 앞단에서 처리하도록 수정하기
@@ -25,9 +31,9 @@ public class CreateArticleHandler implements Handler {
 
         // TODO: 이미지 저장 로직 추가하기
 
-        String newId = String.valueOf(Database.findArticleAll().size() + 1);
+        String newId = String.valueOf(articleDatabase.findAll().size() + 1);
         Article article = new Article(newId, content);
-        Database.addArticle(article);
+        articleDatabase.save(article);
 
         return new ModelAndView("redirect:/");
     }

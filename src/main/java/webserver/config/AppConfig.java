@@ -1,5 +1,7 @@
 package webserver.config;
 
+import db.ArticleDatabase;
+import db.UserDatabase;
 import webserver.argument.resolver.ArgumentResolver;
 import webserver.argument.resolver.CurrentUserArgumentResolver;
 import webserver.core.Dispatcher;
@@ -72,10 +74,10 @@ public class AppConfig {
 
     private Router createRouter() {
         Router router = new Router();
-        router.register("POST", "/create", new CreateUserHandler());
-        router.register("POST", "/login", new LoginHandler());
+        router.register("POST", "/create", new CreateUserHandler(new UserDatabase()));
+        router.register("POST", "/login", new LoginHandler(new UserDatabase()));
         router.register("POST", "/logout", new LogoutHandler());
-        router.register("POST", "/article", new CreateArticleHandler());
+        router.register("POST", "/article", new CreateArticleHandler(new ArticleDatabase()));
         router.register("GET", "/", new IndexHandler());
         router.register("GET", "/mypage", new MyPageHandler());
         router.register("GET", "/article", new ArticlePageHandler());
