@@ -12,12 +12,17 @@
         <a href="/"><img src="/img/signiture.svg" /></a>
         <ul class="header__menu">
           <li class="header__menu__item">
+            안녕하세요, {{username}}님!
+          </li>
+          <li class="header__menu__item">
             <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
           </li>
           <li class="header__menu__item">
-            <button id="logout-btn" class="btn btn_ghost btn_size_s">
-              로그아웃
-            </button>
+            <form method="post" action="/logout" class="header__logout-form">
+              <button type="submit" class="btn btn_ghost btn_size_s">
+                로그아웃
+              </button>
+            </form>
           </li>
         </ul>
       </header>
