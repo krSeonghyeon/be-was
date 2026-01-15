@@ -9,6 +9,10 @@ import webserver.http.MultipartResult;
 import webserver.http.UploadFile;
 import webserver.view.ModelAndView;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class CreateArticleHandler implements Handler {
 
     private final ArticleDatabase articleDatabase;
@@ -22,14 +26,24 @@ public class CreateArticleHandler implements Handler {
 
         MultipartResult result = MultipartParser.parse(request);
 
+        // 디버깅용
+        System.out.println("=== MULTIPART DEBUG ===");
+        System.out.println("FIELDS = " + result.fields());
+        System.out.println("FILES  = " + result.files().keySet());
+        System.out.println("========================");
+
         String content = result.fields().get("content");
         UploadFile image = result.files().get("image");
 
-        if (content == null) {
+        if (image == null) {
             throw new BadRequestException("Missing parameter");
+        } else {
+            try {
+                Files.write(Paths.get("uploads/" + image.filename()), image.content());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-
-        // TODO: 이미지 저장 로직 추가하기
 
         String newId = String.valueOf(articleDatabase.findAll().size() + 1);
         Article article = new Article(newId, content);

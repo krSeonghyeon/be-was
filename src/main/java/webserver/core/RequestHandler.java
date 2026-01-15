@@ -37,14 +37,10 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream();
-             BufferedReader br = new BufferedReader(new InputStreamReader(in));
              DataOutputStream dos = new DataOutputStream(out);
         ) {
-            HttpRequest request = HttpRequestParser.parser(br);
+            HttpRequest request = HttpRequestParser.parse(in);
             HttpResponse response = new HttpResponse();
-            if (request == null) {
-                return;
-            }
             FilterChain chain = new DefaultFilterChain(
                     filters,
                     () -> {
