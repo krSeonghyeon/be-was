@@ -10,8 +10,8 @@ public class ArticleDatabase {
 
     public void save(Article article) {
         String sql = """
-                INSERT INTO ARTICLES (article_id, content)
-                VALUES (?, ?)
+                INSERT INTO ARTICLES (article_id, content, image_url)
+                VALUES (?, ?, ?)
                 """;
 
         try (Connection con = ConnectionManager.getConnection();
@@ -19,6 +19,7 @@ public class ArticleDatabase {
 
             pstmt.setString(1, article.getArticleId());
             pstmt.setString(2, article.getContent());
+            pstmt.setString(3, article.getImageUrl());
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -28,7 +29,7 @@ public class ArticleDatabase {
 
     public Article findById(String articleId) {
         String sql = """
-                SELECT article_id, content
+                SELECT article_id, content, image_url
                 FROM ARTICLES
                 WHERE article_id = ?
                 """;
@@ -42,7 +43,8 @@ public class ArticleDatabase {
             if (rs.next()) {
                 return new Article(
                         rs.getString("article_id"),
-                        rs.getString("content")
+                        rs.getString("content"),
+                        rs.getString("image_url")
                 );
             }
 
@@ -67,7 +69,8 @@ public class ArticleDatabase {
             while (rs.next()) {
                 Article article = new Article(
                         rs.getString("article_id"),
-                        rs.getString("content")
+                        rs.getString("content"),
+                        rs.getString("image_url")
                 );
                 articles.add(article);
             }

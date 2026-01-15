@@ -21,7 +21,8 @@ public class ConnectionManager {
             stmt.execute("""
                     CREATE TABLE ARTICLES (
                         article_id VARCHAR(50) PRIMARY KEY,
-                        content CLOB)
+                        content CLOB,
+                        image_url VARCHAR(255))
                     """);
 
         } catch (SQLException e) {
