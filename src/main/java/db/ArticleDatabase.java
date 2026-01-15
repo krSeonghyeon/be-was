@@ -56,7 +56,7 @@ public class ArticleDatabase {
 
     public List<Article> findAll() {
         String sql = """
-                SELECT article_id, content
+                SELECT article_id, content, image_url
                 FROM ARTICLES
                 """;
 

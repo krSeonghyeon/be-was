@@ -25,6 +25,8 @@ public class AppConfig {
     private final StaticResourceHandler staticResourceHandler = new StaticResourceHandler();
     private final TemplateRenderer templateRenderer = new TemplateRenderer();
     private final ViewResolver viewResolver = new ViewResolver(templateRenderer);
+    private final UserDatabase userDatabase = new UserDatabase();
+    private final ArticleDatabase articleDatabase = new ArticleDatabase();
     private final Router router = createRouter();
 
     public Dispatcher dispatcher() {
@@ -74,11 +76,11 @@ public class AppConfig {
 
     private Router createRouter() {
         Router router = new Router();
-        router.register("POST", "/create", new CreateUserHandler(new UserDatabase()));
-        router.register("POST", "/login", new LoginHandler(new UserDatabase()));
+        router.register("POST", "/create", new CreateUserHandler(userDatabase));
+        router.register("POST", "/login", new LoginHandler(userDatabase));
         router.register("POST", "/logout", new LogoutHandler());
-        router.register("POST", "/article", new CreateArticleHandler(new ArticleDatabase()));
-        router.register("GET", "/", new IndexHandler());
+        router.register("POST", "/article", new CreateArticleHandler(articleDatabase));
+        router.register("GET", "/", new IndexHandler(articleDatabase));
         router.register("GET", "/mypage", new MyPageHandler());
         router.register("GET", "/article", new ArticlePageHandler());
         router.register("GET", "/comment", new CommentHandler());

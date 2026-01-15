@@ -9,6 +9,7 @@ import java.io.*;
 public class StaticResourceHandler {
 
     private static final String BASE_PATH = "src/main/resources/static";
+    private static final String UPLOAD_BASE_PATH = "uploads";
 
     public boolean exists(String path) {
         return resolve(path).exists();
@@ -38,6 +39,10 @@ public class StaticResourceHandler {
     private File resolve(String path) {
         if (path.equals("/")) {
             path = "/index.html";
+        }
+
+        if (path.startsWith("/uploads/")) {
+            return new File(UPLOAD_BASE_PATH + path.replace("/uploads", ""));
         }
 
         File file = new File(BASE_PATH + path);

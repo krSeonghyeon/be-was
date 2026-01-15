@@ -42,14 +42,9 @@ public class CreateArticleHandler implements Handler {
             }
         }
 
-        System.out.println("여기1");
-
         String newId = String.valueOf(articleDatabase.findAll().size() + 1);
         Article article = new Article(newId, content, imageUrl);
-        System.out.println("여기2");
         articleDatabase.save(article);
-        System.out.println("여기3");
-
         return new ModelAndView("redirect:/");
     }
 }
